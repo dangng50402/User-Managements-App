@@ -4,13 +4,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { userApi } from '@/lib/api'
 import { queryKeys } from '@/lib/query-keys'
-import type { CreateUserPayload, User } from '@/types/user'
+import type { CreateUserInput, User } from '@/types/user'
 
 export function useCreateUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (payload: CreateUserPayload) => userApi.create(payload),
+    mutationFn: (payload: CreateUserInput) => userApi.create(payload),
 
     // onMutate: optimistic update
     onMutate: async (payload) => {
