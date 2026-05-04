@@ -61,48 +61,48 @@ export function UserForm({ defaultUser, onSubmit, isSubmitting, onCancel }: User
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" >
       <div className="grid grid-cols-2 gap-4">
         <Field data-invalid={!!errors.name}>
-          <FieldLabel>Tên *</FieldLabel>
-          <Input placeholder="Nguyen Van A" {...register('name')} />
+          <FieldLabel htmlFor='name'>Tên *</FieldLabel>
+          <Input id='name' placeholder="Nguyen Van A" {...register('name')} />
           <FieldError errors={[errors.name]} />
         </Field>
 
         <Field data-invalid={!!errors.username}>
-          <FieldLabel>Username</FieldLabel>
-          <Input placeholder="nguyenvana" {...register('username')} />
+          <FieldLabel htmlFor='username'>Username</FieldLabel>
+          <Input id='username' placeholder="nguyenvana" {...register('username')} />
           <FieldError errors={[errors.username]} />
         </Field>
       </div>
 
       <Field data-invalid={!!errors.email}>
-        <FieldLabel>Email *</FieldLabel>
-        <Input type="email" placeholder="a@example.com" {...register('email')} />
+        <FieldLabel htmlFor='email'>Email *</FieldLabel>
+        <Input id='email' type="email" placeholder="a@example.com" {...register('email')} />
         <FieldError errors={[errors.email]} />
       </Field>
 
       <div className="grid grid-cols-2 gap-4">
         <Field data-invalid={!!errors.phone}>
-          <FieldLabel>Phone</FieldLabel>
-          <Input placeholder="0901234567" {...register('phone')} />
+          <FieldLabel htmlFor='phone'>Phone</FieldLabel>
+          <Input id='phone' placeholder="0901234567" {...register('phone')} />
           <FieldError errors={[errors.phone]} />
         </Field>
 
         <Field data-invalid={!!errors.website}>
-          <FieldLabel>Website</FieldLabel>
-          <Input placeholder="https://example.com" {...register('website')} />
+          <FieldLabel htmlFor='website'>Website</FieldLabel>
+          <Input id='website' placeholder="https://example.com" {...register('website')} />
           <FieldError errors={[errors.website]} />
         </Field>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <Field data-invalid={!!errors.company}>
-          <FieldLabel>Công ty</FieldLabel>
-          <Input placeholder="Acme Corp" {...register('company')} />
+          <FieldLabel htmlFor='company'>Công ty</FieldLabel>
+          <Input id='company' placeholder="Acme Corp" {...register('company')} />
           <FieldError errors={[errors.company]} />
         </Field>
 
         <Field data-invalid={!!errors.city}>
-          <FieldLabel>Thành phố</FieldLabel>
-          <Input placeholder="Hà Nội" {...register('city')} />
+          <FieldLabel htmlFor='city'>Thành phố</FieldLabel>
+          <Input id='city' placeholder="Hà Nội" {...register('city')} />
           <FieldError errors={[errors.city]} />
         </Field>
       </div>
