@@ -1,62 +1,83 @@
-'use client'
+"use client"
 
-import { LogOut, User } from 'lucide-react'
-import { useAuthStore, selectAuthUser, selectIsAuthenticated } from '@/stores/auth-store'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useState } from "react"
+import { Menu } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet"
+import { SidebarContent } from "./sidebar"
 
-export function Header() {
-  const user = useAuthStore(selectAuthUser)
-  const isAuthenticated = useAuthStore(selectIsAuthenticated)
-  const logout = useAuthStore((state) => state.logout)
+type HeaderProps = {
+  title: string
+}
+
+export function Header({ title }: HeaderProps) {
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   return (
-    <header className="border-b bg-white sticky top-0 z-10">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-        <div>
-          <h1 className="font-semibold text-lg">User Management</h1>
-          <p className="text-xs text-muted-foreground hidden sm:block">
-            JSONPlaceholder API
-          </p>
-        </div>
+    <header className="flex h-14 items-center border-b bg-background px-4 gap-4">
+      {/* Hamburger — chỉ hiện trên mobile (< lg) */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden"
+          onClick={() => setSheetOpen(true)}
+          aria-label="Open navigation menu"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
 
-        {isAuthenticated && user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2">
-                <Avatar className="h-7 w-7">
-                  <AvatarFallback className="text-xs">
-                    {user.name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm hidden sm:inline">{user.name}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel>
-                <p className="font-medium text-sm">{user.name}</p>
-                <p className="text-xs text-muted-foreground font-normal">{user.email}</p>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout} className="text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                Đăng xuất
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button variant="outline" size="sm" asChild>
-            <a href="/login">
-              <User className="mr-2 h-4 w-4" />
-              Đăng nhập
-            </a>
+        <SheetContent side="left" className="p-0 w-60">
+          {/* SheetTitle required cho accessibility (screen reader) */}
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <SidebarContent onClose={() => setSheetOpen(false)} isSheet={true} />
+        </SheetContent>
+      </Sheet>
+
+      {/* Page title */}
+      <h1 className="text-sm font-semibold flex-1">{title}</h1>
+
+      {/* User menu — phải header */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2 h-9 px-2"
+            aria-label="User account menu"
+          >
+            <Avatar className="h-7 w-7">
+              <AvatarImage src="" alt="User avatar" />
+              <AvatarFallback className="text-xs">JD</AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-medium hidden md:inline">
+              John Doe
+            </span>
           </Button>
-        )}
-      </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 bg-white dark:bg-neutral-900">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="text-destructive focus:text-destructive">
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   )
 }
