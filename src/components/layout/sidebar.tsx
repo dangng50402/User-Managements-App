@@ -50,7 +50,7 @@ export function SidebarContent({ onClose, isSheet = false }: SidebarContentProps
             const isActive = pathname === item.href
             return (
               <Link
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 onClick={onClose}
                 aria-current={isActive ? "page" : undefined}
@@ -82,7 +82,7 @@ export function SidebarContent({ onClose, isSheet = false }: SidebarContentProps
             const isActive = pathname === item.href
             return (
               <Link
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 onClick={onClose}
                 aria-current={isActive ? "page" : undefined}

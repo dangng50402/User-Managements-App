@@ -1,4 +1,4 @@
-import { CreateUserPayload, User } from "@/types/user";
+import { CreateUserInput, User } from "@/types/user";
 
 const BASE_URL = "https://jsonplaceholder.typicode.com";
 
@@ -28,14 +28,14 @@ export const userApi = {
 
   // POST /users
   // JSONPlaceholder fake: trả về id=11 không lưu thật
-  create: (payload: CreateUserPayload): Promise<User> =>
+  create: (payload: CreateUserInput): Promise<User> =>
     fetcher<User>("/users", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
 
   // PATCH /users/:id
-  update: (id: number, payload: Partial<CreateUserPayload>): Promise<User> =>
+  update: (id: number, payload: Partial<CreateUserInput>): Promise<User> =>
     fetcher<User>(`/users/${id}`, {
       method: "PATCH",
       body: JSON.stringify(payload),

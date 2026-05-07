@@ -18,6 +18,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { SidebarContent } from "./sidebar"
+import {useRouter} from "next/navigation"
+import { useAuthStore } from "@/stores/auth-store"
 
 type HeaderProps = {
   title: string
@@ -25,7 +27,13 @@ type HeaderProps = {
 
 export function Header({ title }: HeaderProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
+  const router = useRouter()
+  const logout = useAuthStore((s) => s.logout)
 
+  const handeLogout = () => {
+    logout()
+    router.replace("/login")
+  }
   return (
     <header className="flex h-14 items-center border-b bg-background px-4 gap-4">
       {/* Hamburger — chỉ hiện trên mobile (< lg) */}
@@ -73,7 +81,7 @@ export function Header({ title }: HeaderProps) {
           <DropdownMenuItem>Profile</DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-destructive focus:text-destructive">
+          <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handeLogout}>
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>

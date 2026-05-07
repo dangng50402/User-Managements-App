@@ -51,8 +51,8 @@ export const userFormSchema = z.object({
 // ─── Cross-field validation với .check() (v4 thay .superRefine()) ─────────────
 export const userFormSchemaWithContact = userFormSchema
   .check((ctx) => {
-    const hasPhone = ctx.value.phone && ctx.value.phone.trim() !== ''
-    const hasWebsite = ctx.value.website && ctx.value.website.trim() !== ''
+    const hasPhone = Boolean(ctx.value.phone?.trim())
+    const hasWebsite = Boolean(ctx.value.website?.trim())
 
     if (!hasPhone && !hasWebsite) {
       // v4: push vào ctx.issues, dùng code: 'custom' (string, không phải enum)

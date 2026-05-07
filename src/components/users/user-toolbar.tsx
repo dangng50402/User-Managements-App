@@ -1,37 +1,46 @@
-'use client'
+"use client";
 
-import { Search, SlidersHorizontal, Plus } from 'lucide-react'
-import { useAuthStore, selectIsAuthenticated } from '@/stores/auth-store'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Search, SlidersHorizontal, Plus } from "lucide-react";
+import { useAuthStore, selectIsAuthenticated } from "@/stores/auth-store";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select'
-import type { FilterStatus, SortField, SortOrder } from '@/types/user'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { FilterStatus, SortField, SortOrder } from "@/types/user";
 
 interface UserToolbarProps {
-  search: string
-  onSearchChange: (v: string) => void
-  filter: FilterStatus
-  onFilterChange: (v: FilterStatus) => void
-  sortField: SortField
-  onSortFieldChange: (v: SortField) => void
-  sortOrder: SortOrder
-  onSortOrderChange: (v: SortOrder) => void
-  onCreateClick: () => void
-  totalCount: number
-  filteredCount: number
+  search: string;
+  onSearchChange: (v: string) => void;
+  filter: FilterStatus;
+  onFilterChange: (v: FilterStatus) => void;
+  sortField: SortField;
+  onSortFieldChange: (v: SortField) => void;
+  sortOrder: SortOrder;
+  onSortOrderChange: (v: SortOrder) => void;
+  onCreateClick: () => void;
+  totalCount: number;
+  filteredCount: number;
 }
 
 export function UserToolbar({
-  search, onSearchChange,
-  filter, onFilterChange,
-  sortField, onSortFieldChange,
-  sortOrder, onSortOrderChange,
+  search,
+  onSearchChange,
+  filter,
+  onFilterChange,
+  sortField,
+  onSortFieldChange,
+  sortOrder,
+  onSortOrderChange,
   onCreateClick,
-  totalCount, filteredCount,
+  totalCount,
+  filteredCount,
 }: UserToolbarProps) {
-  const isAuthenticated = useAuthStore(selectIsAuthenticated)
+  const isAuthenticated = useAuthStore(selectIsAuthenticated);
 
   return (
     <div className="space-y-3">
@@ -48,7 +57,10 @@ export function UserToolbar({
         </div>
 
         {/* Filter */}
-        <Select value={filter} onValueChange={(v) => onFilterChange(v as FilterStatus)}>
+        <Select
+          value={filter}
+          onValueChange={(v) => onFilterChange(v as FilterStatus)}
+        >
           <SelectTrigger className="w-44">
             <SlidersHorizontal className="mr-2 h-4 w-4" />
             <SelectValue />
@@ -61,7 +73,10 @@ export function UserToolbar({
         </Select>
 
         {/* Sort */}
-        <Select value={sortField} onValueChange={(v) => onSortFieldChange(v as SortField)}>
+        <Select
+          value={sortField}
+          onValueChange={(v) => onSortFieldChange(v as SortField)}
+        >
           <SelectTrigger className="w-36">
             <SelectValue />
           </SelectTrigger>
@@ -72,7 +87,10 @@ export function UserToolbar({
           </SelectContent>
         </Select>
 
-        <Select value={sortOrder} onValueChange={(v) => onSortOrderChange(v as SortOrder)}>
+        <Select
+          value={sortOrder}
+          onValueChange={(v) => onSortOrderChange(v as SortOrder)}
+        >
           <SelectTrigger className="w-28">
             <SelectValue />
           </SelectTrigger>
@@ -84,7 +102,15 @@ export function UserToolbar({
 
         {/* Create button — chỉ hiện khi đã login */}
         {isAuthenticated && (
-          <Button onClick={onCreateClick}>
+          <Button
+            onClick={onCreateClick}
+            className="
+          border border-border
+          shadow-sm
+          hover:shadow-md
+          transition-all
+        "
+          >
             <Plus className="mr-2 h-4 w-4" />
             Thêm user
           </Button>
@@ -93,8 +119,10 @@ export function UserToolbar({
 
       {/* Stats */}
       <p className="text-sm text-muted-foreground">
-        Hiển thị <span className="font-medium text-foreground">{filteredCount}</span> / {totalCount} users
+        Hiển thị{" "}
+        <span className="font-medium text-foreground">{filteredCount}</span> /{" "}
+        {totalCount} users
       </p>
     </div>
-  )
+  );
 }

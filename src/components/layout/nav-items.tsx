@@ -14,7 +14,7 @@ import {
   export const navItems: NavItem[] = [
     {
       label: "Dashboard",
-      href: "/dashboard",
+      href: "/users",
       icon: LayoutDashboard,
     },
     {
