@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback, useRef } from "react"  // ← thêm useCallback
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { useAuthStore, selectIsAuthenticated } from "@/stores/auth-store"
@@ -13,7 +13,7 @@ import { UserToolbar }   from "@/components/users/user-toolbar"
 import { UserTable }     from "@/components/users/user-table"
 import { UserDialog }    from "@/components/users/user-dialog"
 import { useDebounce }   from "@/hooks/use-debounce"
-import type { User, UpdateUserInput, CreateUserInput } from "@/types/user"
+import type { User, UpdateUserInput, CreateUserInput, SortField, SortOrder } from "@/types/user"
 import type { UserFormValues } from "@/lib/schemas"
 
 export function UsersPageClient() {
@@ -23,14 +23,8 @@ export function UsersPageClient() {
   const { query, status, sort, order, setQuery, setStatus, setSort } =
     useTableQueryState()
 
-  // inputValue: UI state thuần — không dùng useEffect để sync
-  // Khởi tạo từ query (URL) để không mất state khi refresh
   const [inputValue, setInputValue] = useState(query)
-
-  // debouncedQ: chỉ dùng để gọi API — không update URL
-  // URL được update bởi setQuery khi user dừng gõ
   const debouncedQ = useDebounce(inputValue, 400)
-
   const [dialogOpen,  setDialogOpen]  = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
 
@@ -38,7 +32,7 @@ export function UsersPageClient() {
     users, totalCount, filteredCount,
     isPending, isError, error, isFetching,
   } = useUsers({
-    search:    debouncedQ,  // ← dùng debouncedQ trực tiếp, không qua URL
+    search:    debouncedQ,
     filter:    status,
     sortField: sort,
     sortOrder: order,
@@ -48,7 +42,8 @@ export function UsersPageClient() {
   const updateMutation = useUpdateUser()
   const deleteMutation = useDeleteUser()
 
-  const handleCreateClick = () => {
+  // ✅ useCallback — deps rỗng vì chỉ dùng stable refs
+  const handleCreateClick = useCallback(() => {
     if (!isAuthenticated) {
       toast.error("Vui lòng đăng nhập để thực hiện thao tác này")
       router.replace("/login")
@@ -56,14 +51,21 @@ export function UsersPageClient() {
     }
     setEditingUser(null)
     setDialogOpen(true)
-  }
+  }, [isAuthenticated, router])
 
-  const handleEdit = (user: User) => {
+  // ✅ useCallback — không tạo function mới mỗi render
+  const handleEdit = useCallback((user: User) => {
     setEditingUser(user)
     setDialogOpen(true)
-  }
+  }, []) // setEditingUser, setDialogOpen là stable
 
-  const handleDialogSubmit = (values: UserFormValues) => {
+  // ✅ FIX CHÍNH — đây là thủ phạm gây UserTable re-render
+  const handleDelete = useCallback((id: number) => {
+    deleteMutation.mutate(id)
+  }, [deleteMutation.mutate])
+
+  // ✅ useCallback — editingUser thay đổi khi user chọn edit
+  const handleDialogSubmit = useCallback((values: UserFormValues) => {
     if (editingUser) {
       const updateData: UpdateUserInput = {
         id:       editingUser.id,
@@ -91,13 +93,23 @@ export function UsersPageClient() {
         onSuccess: () => setDialogOpen(false),
       })
     }
-  }
+  }, [editingUser, updateMutation, createMutation])
 
-  // Handler cho search input — update cả inputValue lẫn URL
-  const handleSearchChange = (value: string) => {
-    setInputValue(value)   // update UI ngay
-    setQuery(value)        // update URL (hook dùng router.replace)
-  }
+  const handleSearchChange = useCallback((value: string) => {
+    setInputValue(value)
+    setQuery(value)
+  }, [setQuery])
+
+  // ✅ Thêm 2 useCallback còn thiếu cho sort
+  const handleSortFieldChange = useCallback(
+    (f: SortField) => setSort(f, order),
+    [setSort, order]
+  );
+
+  const handleSortOrderChange = useCallback(
+    (o: SortOrder) => setSort(sort, o),
+    [setSort, sort]
+  );
 
   return (
     <div className="space-y-6">
@@ -109,13 +121,13 @@ export function UsersPageClient() {
 
       <UserToolbar
         search={inputValue}
-        onSearchChange={handleSearchChange}  // ← gọi cả 2: setInputValue + setQuery
+        onSearchChange={handleSearchChange}
         filter={status}
         onFilterChange={setStatus}
         sortField={sort}
-        onSortFieldChange={(f) => setSort(f, order)}
+        onSortFieldChange={handleSortFieldChange}
         sortOrder={order}
-        onSortOrderChange={(o) => setSort(sort, o)}
+        onSortOrderChange={handleSortOrderChange}
         onCreateClick={handleCreateClick}
         totalCount={totalCount}
         filteredCount={filteredCount}
@@ -126,9 +138,9 @@ export function UsersPageClient() {
         isPending={isPending}
         isFetching={isFetching}
         onEdit={handleEdit}
-        onDelete={(id) => deleteMutation.mutate(id)}
+        onDelete={handleDelete}       
         isDeleting={deleteMutation.isPending}
-        search={debouncedQ}  // ← debouncedQ cho highlight
+        search={debouncedQ}
       />
 
       <UserDialog

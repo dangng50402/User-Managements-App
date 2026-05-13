@@ -1,5 +1,7 @@
+// UserToolbar.tsx
 "use client";
 
+import { memo } from "react";
 import { Search, SlidersHorizontal, Plus } from "lucide-react";
 import { useAuthStore, selectIsAuthenticated } from "@/stores/auth-store";
 import { Input } from "@/components/ui/input";
@@ -27,7 +29,7 @@ interface UserToolbarProps {
   filteredCount: number;
 }
 
-export function UserToolbar({
+export const UserToolbar = memo(function UserToolbar({
   search,
   onSearchChange,
   filter,
@@ -45,7 +47,6 @@ export function UserToolbar({
   return (
     <div className="space-y-3">
       <div className="flex gap-3 flex-wrap">
-        {/* Search */}
         <div className="relative flex-1 min-w-48">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
@@ -56,7 +57,6 @@ export function UserToolbar({
           />
         </div>
 
-        {/* Filter */}
         <Select
           value={filter}
           onValueChange={(v) => onFilterChange(v as FilterStatus)}
@@ -72,7 +72,6 @@ export function UserToolbar({
           </SelectContent>
         </Select>
 
-        {/* Sort */}
         <Select
           value={sortField}
           onValueChange={(v) => onSortFieldChange(v as SortField)}
@@ -100,16 +99,10 @@ export function UserToolbar({
           </SelectContent>
         </Select>
 
-        {/* Create button — chỉ hiện khi đã login */}
         {isAuthenticated && (
           <Button
             onClick={onCreateClick}
-            className="
-          border border-border
-          shadow-sm
-          hover:shadow-md
-          transition-all
-        "
+            className="border border-border shadow-sm hover:shadow-md transition-all"
           >
             <Plus className="mr-2 h-4 w-4" />
             Thêm user
@@ -117,7 +110,6 @@ export function UserToolbar({
         )}
       </div>
 
-      {/* Stats */}
       <p className="text-sm text-muted-foreground">
         Hiển thị{" "}
         <span className="font-medium text-foreground">{filteredCount}</span> /{" "}
@@ -125,4 +117,4 @@ export function UserToolbar({
       </p>
     </div>
   );
-}
+});
