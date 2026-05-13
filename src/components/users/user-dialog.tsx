@@ -19,6 +19,8 @@ interface UserDialogProps {
   isSubmitting: boolean;
 }
 
+export type { UserFormValues } from "@/lib/schemas";
+
 export function UserDialog({
   open,
   onOpenChange,
